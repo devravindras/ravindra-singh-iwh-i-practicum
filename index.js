@@ -13,7 +13,23 @@ const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_ACCESS;
 const CUSTOM_OBJECT_TYPE = process.env.CUSTOM_OBJECT_TYPE;
 
 app.get("/", async (req, res) => {
-  res.render("homepage", { title: "Video Games" });
+  const customObjectsUrl = `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_TYPE}?properties=name,publisher,price`;
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  };
+  try {
+    const resp = await axios.get(customObjectsUrl, { headers });
+    const data = resp.data.results;
+    const properties =
+      data.length > 0
+        ? Object.keys(data[0].properties).filter((p) => p !== "name")
+        : [];
+    res.render("homepage", { title: "Video Games", data, properties });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error fetching custom objects");
+  }
 });
 
 app.get("/update-cobj", (req, res) => {

@@ -7,5 +7,19 @@ html
     body    
         div(class="container")
             h1 Video Games
-            a(href="/update-cobj") Add a new game
-            
+            a(href="/update-cobj") Add to this table
+            div(class="table-wrapper")
+                table
+                    thead
+                        tr
+                            th ID
+                            th Name
+                            each prop in properties
+                                th= prop
+                    tbody
+                        each item in data
+                            tr
+                                td= item.id
+                                td= item.properties.name
+                                each prop in properties
+                                    td= item.properties[prop]
