@@ -20,4 +20,26 @@ app.get("/update-cobj", (req, res) => {
   res.render("updates", { title: "Update Video Game" });
 });
 
+app.post("/update-cobj", async (req, res) => {
+  const newObject = {
+    properties: {
+      name: req.body.name,
+      publisher: req.body.publisher,
+      price: req.body.price,
+    },
+  };
+  const createUrl = `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_TYPE}`;
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  };
+  try {
+    await axios.post(createUrl, newObject, { headers });
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error creating custom object");
+  }
+});
+
 app.listen(3000, () => console.log("Listening on http://localhost:3000"));
